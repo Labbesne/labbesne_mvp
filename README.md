@@ -192,7 +192,7 @@ To check that you are properly connected, type:
 gh auth status
 ```
 
-If you get `Logged in to github.com as <YOUR USERNAME> `, then all good. If not, **ask a teacher**.
+If you get `Logged in to github.com as <YOUR USERNAME> `, then all good. If not, **ask Abe or preferrably StackOverflow**.
 
 Then run the following configuration line:
 
