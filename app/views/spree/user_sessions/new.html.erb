@@ -1,10 +1,10 @@
 <div class="container-fluid container-fullscreen container-fullscreen-bg container-fullscreen-flex container-fullscreen-flex-vc">
   <div class="login-logo-container">
-    <%= image_tag "logo-white.png", class: 'login-logo' %>
+   <h1>Labbesne</h1>
   </div>
   <div class="login-form-area">
     <%= render partial: 'spree/shared/custom_login' %>
-    <%= link_to "New here? Create a new account", spree.signup_path, class: "devise_extras" %>
-    <%= link_to t('spree.forgot_password'), spree.recover_password_path, class: "devise_extras" %>
+    <% #link_to "New here? Create a new account", spree.signup_path, class: "devise_extras" %>
+    <% #link_to t('spree.forgot_password'), spree.recover_password_path, class: "devise_extras" %>
   </div>
 </div>

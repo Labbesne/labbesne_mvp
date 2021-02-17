@@ -1,21 +1,23 @@
-<% unless @tracks.empty? %>
+<% unless @shipments.nil? %>
   <div class="accordion accordion-flush" id="vendor_order_accordion">
-    <% @tracks.each_with_index do |o,i| %>
+    <% @shipments.each_with_index do |s,i| %>
       <div class="accordion-item">
         <h2 class="accordion-header" id="accordion_<%= i %>">
           <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#vendor_body_<%= i %>" aria-expanded="false" aria-controls="vendor_body_<%= i %>">
-            <%= "Order Number ##{Spree::Order.find(o.first.to_i).number} Order_id: #{o[0]}" %>
+            <%= "Shipment Number ##{s.number}" %>
           </button>
         </h2>
         <div id="vendor_body_<%= i %>" class="accordion-collapse collapse vendor_accordion_body" aria-labelledby="accordion_<%= i %>" data-bs-parent="#vendor_order_accordion">
           <div class="accordion-body">
-            <button class="btn btn-primary vendor_mark_ready" data-o="<%= o[0] %>">Mark as ready</button>
+            <button class="btn btn-primary vendor_mark_ready" data-s="<%= s.id %>">Print Shipping Slip</button>
             <ul>
-              <% o.last.each do |t| %>
-                <li class="vendor_line_item">
-                  <%= image_tag t.item.product.images.first.url(:small) %>
-                  <p><%= "SKU: #{t.item.product.vendorSKU.nil? ? "NO SKU using Labbesne SKU #{t.item.product.sku}" : t.item.product.vendorSKU} Quantity: #{t.item.quantity} track_id: #{t.id}" %></p>
-                </li>
+              <% s.line_items.each do |li| %>
+                <% if li.product.deleted_at.nil? %>
+                  <li class="vendor_line_item">
+                    <%= image_tag li.product.images.first.url(:small) %>
+                    <p><%= "SKU: #{li.product.vendorSKU.nil? ? "NO SKU using Labbesne SKU #{li.product.sku}" : li.product.vendorSKU} Quantity: #{li.quantity}" %></p>
+                  </li>
+                <% end %>
               <% end %>
             </ul>
           </div>

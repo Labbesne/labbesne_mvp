@@ -1,0 +1,35 @@
+<div class="vendor_info_container">
+  <div class="personal_inputs">
+    <div class="vendor_form_group">
+      <input class="vendor_info_input" id="vendor_name" placeholder="Name" data-action="name" type="text" value="<%= current_spree_user.stock_locations.first.admin_name %>">
+    </div>
+    <div class="vendor_form_group">
+      <input class="vendor_info_input" id="vendor_phone" placeholder="Phone" data-action="phone" type="tel" pattern="[+ 0-9]{8}" value="<%= current_spree_user.stock_locations.first.phone %>">
+    </div>
+  </div>
+  <div class="address_inputs">
+    <div class="vendor_form_group">
+      <input class="vendor_info_input vendor_address" id="vendor_state" placeholder="State" data-action="address" type="text">
+    </div>
+    <div class="vendor_form_group">
+      <input class="vendor_info_input vendor_address" id="vendor_city" placeholder="City" data-action="address" type="text">
+    </div>
+    <div class="vendor_form_group">
+      <input class="vendor_info_input vendor_address" id="vendor_area" placeholder="Area" data-action="address" type="text">
+    </div>
+    <div class="vendor_form_group">
+      <input class="vendor_info_input vendor_address" id="vendor_street" placeholder="Street Name" data-action="address" type="text">
+    </div>
+    <div class="vendor_form_group">
+      <input class="vendor_info_input vendor_address" id="vendor_building" placeholder="Building Name" data-action="address" type="text">
+    </div>
+    <div class="vendor_form_group">
+      <input class="vendor_info_input vendor_address" id="vendor_floor" placeholder="Floor" data-action="address" type="text">
+    </div>
+  </div>
+  <div class="loading_area hidden">
+    <div class="spinner_vendor">Loading...</div>
+    <span id="loading_text">Saving...</span>
+  </div>
+</div>
+

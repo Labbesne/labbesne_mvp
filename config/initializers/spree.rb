@@ -23,7 +23,7 @@ Spree.config do |config|
   Spree::Auth::Config[:confirmable] = true
   # Uncomment to stop tracking inventory levels in the application
   # config.track_inventory_levels = false
-
+  config.require_payment_to_ship = false
   # When set, product caches are only invalidated when they fall below or rise
   # above the inventory_cache_threshold that is set. Default is to invalidate cache on
   # any inventory changes.

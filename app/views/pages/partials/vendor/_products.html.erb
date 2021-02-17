@@ -1,0 +1,14 @@
+<div class="vendor_products_container">
+  <%= paginate @products, remote: true %>
+  <div class="vendor_products_action_row">
+    <button class="btn btn_new_product">New Product <i class="fa fa-plus"></i></button>
+    <div class="search_form_sku">
+      <input type="text" placeholder="SKU" data-page="<%= @products.current_page %>" id="vendor_search">
+      <i class="fa fa-search" style="color: white;"></i>
+    </div>
+  </div>
+  <div class="dynamic_vendor_products_list">
+    <%= render partial: 'pages/partials/vendor/products_list' %>
+  </div>
+</div>
+

@@ -30,9 +30,6 @@ class Spree::UserSessionsController < Devise::SessionsController
         format.js { render success_json }
       end
     else
-      puts "x\nx\nx\nx\nx\nx\nx\nx\nx\nx\nx\nx\nx\nx\nx"
-      puts t('devise.failure.invalid')
-      puts "x\nx\nx\nx\nx\nx\nx\nx\nx\nx\nx\nx\nx\nx\nx"
       respond_to do |format|
         format.html do
           flash.now[:error] = t('devise.failure.invalid')

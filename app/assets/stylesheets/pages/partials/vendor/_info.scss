@@ -1,0 +1,116 @@
+.vendor_info_container{
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  .personal_inputs{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+  }
+  .address_inputs{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-around;
+  }
+}
+.vendor_form_group{
+  position: relative;
+  width: 49%;
+  input{
+    width: 100%;
+    height: 50px;
+    margin-bottom: 10px;
+    border-radius: 3px;
+    border: 1px solid rgba(250,250,250,0.2);
+    background: rgba(250,250,250,0.2);
+    color: rgba(250,250,250,0.5);
+    &:focus{
+      border: 1px solid rgba(250,250,250,0.8);
+      background: rgba(250,250,250,0.5);
+      color: rgba(250,250,250,0.8);
+      outline: none;
+      &::placeholder {
+        color: white;
+        opacity: 0.6;
+      }
+    }
+    &::placeholder {
+      color: white;
+      opacity: 0.9;
+      margin-left: 20px;
+    }
+  }
+}
+.spinner_vendor,
+.spinner_vendor:before,
+.spinner_vendor:after {
+  background: #ffffff;
+  -webkit-animation: load1 1s infinite ease-in-out;
+  animation: load1 1s infinite ease-in-out;
+  width: 1em;
+  height: 4em;
+}
+.spinner_vendor {
+  color: #ffffff;
+  text-indent: -9999em;
+  margin: 88px auto;
+  position: relative;
+  font-size: 11px;
+  -webkit-transform: translateZ(0);
+  -ms-transform: translateZ(0);
+  transform: translateZ(0);
+  -webkit-animation-delay: -0.16s;
+  animation-delay: -0.16s;
+}
+.spinner_vendor:before,
+.spinner_vendor:after {
+  position: absolute;
+  top: 0;
+  content: '';
+}
+.spinner_vendor:before {
+  left: -1.5em;
+  -webkit-animation-delay: -0.32s;
+  animation-delay: -0.32s;
+}
+.spinner_vendor:after {
+  left: 1.5em;
+}
+@-webkit-keyframes load1 {
+  0%,
+  80%,
+  100% {
+    box-shadow: 0 0;
+    height: 4em;
+  }
+  40% {
+    box-shadow: 0 -2em;
+    height: 5em;
+  }
+}
+@keyframes load1 {
+  0%,
+  80%,
+  100% {
+    box-shadow: 0 0;
+    height: 4em;
+  }
+  40% {
+    box-shadow: 0 -2em;
+    height: 5em;
+  }
+}
+.loading_area{
+  width: 100%;
+  display: flex;
+  flex-direction: column-reverse;
+  #loading_text{
+    text-align: center;
+    color: rgba(250,250,250,0.7);
+  }
+}

@@ -12,3 +12,4 @@
 $(document).ready(function(){
   $('.delete-resource').removeClass('fa').addClass('fas');
 });
+//= require spree/backend/solidus_reports

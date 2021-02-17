@@ -1,0 +1,90 @@
+  <ul id="vendor_products_list">
+    <div id="new_vendor_product_row" class="hidden">
+      <li class="vendor_products_row" data-locked="true">
+      <div class="loading_area_save_product hidden" id="new_product_loader">
+        <div class="spinner_vendor">Loading...</div>
+        <span id="loading_text">Saving...</span>
+      </div>
+    <div class="row_image_section">
+      <%= image_tag '', class: 'vendor_product_row_image new_image_placeholder' %>
+      <%= simple_form_for @image, url: spree.admin_product_images_path(0), method: "post", remote: true, html: {class: 'vendor_image_edit_form', id: "new_image_form"} do |f| %>
+        <%= f.input :viewable_id, as: :hidden, input_html: {id: "new_viewable"} %>
+        <%= f.input :attachment, as: :file, input_html: {class: 'vendor_image_input', id: "new_attachment"} %>
+        <%= f.input :viewable_type, as: :hidden, input_html: {value: 'Spree::Variant', id: "ne_image_attachment_type"} %>
+        <%= f.input :position, as: :hidden, input_html: {value: 0, id: "new_image_position"} %>
+        <%= f.submit "Post", class: 'vendor_upload_image_trigger', id: 'vendor_new_product_trigger' %>
+      <% end %>
+      <i class="fas fa-cloud-upload-alt vendor_upload_image" id="new_upload_icon"></i>
+      <div class="stock_section">
+        <label for="">Stock</label>
+        <input id="new_stock" min='1' class="vendor_product_details" data-prev="<%= @p.total_on_hand %>" data-type="stock" type="number" value="<%= @p.total_on_hand %>">
+      </div>
+      <button data-p="<%= @p.id %>" class="btn btn-primary btn-vendor-new-save">Save</button>
+    </div>
+    <div class="row_info_section">
+      <h2><input id="vendor_new_product_name" class="vendor_product_details" data-prev="<%= @p.name %>" placeholder="Name" data-type="name" type="text" value="<%= @p.name %>"></h2>
+      <h6 style="display: flex;">SKU: <input id="vendor_new_sku" class="vendor_product_details" data-prev="<%= @p.vendorSKU %>" data-type="vendorSKU" type="text" value="<%= @p.vendorSKU %>"></h6>
+      <ul id="row_info_section_list">
+        <li>Price: <input id="vendor_new_product_price" class="vendor_product_details" data-prev="<%= @p.price %>" data-type="price" type="text" value="<%= @p.price %>"></li>
+        <li>Gender:
+          <select id="vendor_new_product_gender" class="vendor_product_details" data-prev="<%= @p.gender %>" data-type="gender" type="text" value="<%= @p.gender %>">
+            <option value="Men">Men</option>
+            <option value="Woman">Woman</option>
+            <option value="Unisex">Unisex</option>
+          </select>
+        </li>
+        <li>Brand: <input id="vendor_new_product_brand" class="vendor_product_details" data-prev="<%= Spree::ProductProperty.find_by(product_id: @p.id, property_id: Spree::Property.find_by(name: 'Brand')).nil? ? "" : Spree::ProductProperty.find_by(product_id: @p.id, property_id: Spree::Property.find_by(name: 'Brand')).value %>" data-type="brand" type="text" value="<%= Spree::ProductProperty.find_by(product_id: @p.id, property_id: Spree::Property.find_by(name: 'Brand')).nil? ? "" : Spree::ProductProperty.find_by(product_id: @p.id, property_id: Spree::Property.find_by(name: 'Brand')).value %>"></li>
+        <li>Fabric: <input id="vendor_new_product_fabric" class="vendor_product_details" data-prev="<%= Spree::ProductProperty.find_by(product_id: @p.id, property_id: Spree::Property.find_by(name: 'Fabric')).nil? ? "" : Spree::ProductProperty.find_by(product_id: @p.id, property_id: Spree::Property.find_by(name: 'Fabric')).value %>" data-type="fabric" type="text" value="<%= Spree::ProductProperty.find_by(product_id: @p.id, property_id: Spree::Property.find_by(name: 'Fabric')).nil? ? "" : Spree::ProductProperty.find_by(product_id: @p.id, property_id: Spree::Property.find_by(name: 'Fabric')).value  %>"></li>
+        <li>Sizes: <input id="vendor_new_product_sizes" class="vendor_product_details" data-prev="<%= Spree::ProductProperty.find_by(product_id: @p.id, property_id: Spree::Property.find_by(name: 'Sizes')).nil? ? "" : Spree::ProductProperty.find_by(product_id: @p.id, property_id: Spree::Property.find_by(name: 'Sizes')).value %>" data-type="sizes" type="text" value="<%= Spree::ProductProperty.find_by(product_id: @p.id, property_id: Spree::Property.find_by(name: 'Sizes')).nil? ? "" : Spree::ProductProperty.find_by(product_id: @p.id, property_id: Spree::Property.find_by(name: 'Sizes')).value %>"></li>
+      </ul>
+    </div>
+    <div class="row_description_section">
+      <h4>Description:</h4>
+      <textarea data-prev="<%= @p.description %>" data-type="description" class="vendor_product_details"><%= @p.description %></textarea>
+    </div>
+  </li>
+    </div>
+  <% @products.each_with_index do |p,i| %>
+    <li class="vendor_products_row" data-locked="true">
+        <div class="loading_area_save_product hidden">
+          <div class="spinner_vendor">Loading...</div>
+          <span id="loading_text">Saving...</span>
+        </div>
+      <i class="fa fa-lock vendor_lock"></i>
+      <i class="fa fa-unlock vendor_unlock hidden"></i>
+      <div class="row_image_section">
+        <%= simple_form_for @image, url: spree.admin_product_images_path(p.id), method: "post", remote: true, html: {class: 'vendor_image_edit_form', id: "image_form_#{i}"} do |f| %>
+          <%= f.input :viewable_id, as: :hidden, input_html: {value: p.variants_including_master.first.id, id: "viewable_id_#{i}"} %>
+          <%= f.input :attachment, as: :file, disabled: true, input_html: {class: 'vendor_image_input', id: "image_attachment_#{i}"} %>
+          <%= f.input :viewable_type, as: :hidden, input_html: {value: 'Spree::Variant', id: "image_attachment_type_#{i}"} %>
+          <%= f.input :position, as: :hidden, input_html: {value: 0, id: "image_position_#{i}"} %>
+          <%= f.submit "Post", class: 'vendor_upload_image_trigger' %>
+        <% end %>
+        <%= image_tag p.images.first.url('small'), class: 'vendor_product_row_image' %>
+        <div class="stock_section">
+          <label for="">Stock</label>
+          <input class="vendor_product_details" data-prev="<%= p.total_on_hand %>" data-type="stock" disabled="true" type="number" value="<%= p.total_on_hand %>">
+        </div>
+        <button data-p="<%= p.id %>" class="btn btn-primary btn-vendor-save hidden">Save</button>
+      </div>
+      <div class="row_info_section">
+        <h2><input class="vendor_product_details" data-prev="<%= p.name %>" data-type="name" disabled="true" type="text" value="<%= p.name %>"></h2>
+        <h6 style="display: flex;">SKU: <input class="vendor_product_details" data-prev="<%= p.vendorSKU %>" data-type="vendorSKU" disabled="true" type="text" value="<%= p.vendorSKU %>"></h6>
+        <ul id="row_info_section_list">
+          <li>Price: <input class="vendor_product_details" data-prev="<%= p.price %>" data-type="price" disabled="true" type="text" value="<%= p.price %>"></li>
+          <li>Gender: <input class="vendor_product_details" data-prev="<%= p.gender %>" data-type="gender" disabled="true" type="text" value="<%= p.gender %>"></li>
+          <li>Brand: <input class="vendor_product_details" data-prev="<%= Spree::ProductProperty.find_by(product_id: p.id, property_id: Spree::Property.find_by(name: 'Brand')).nil? ? "" : Spree::ProductProperty.find_by(product_id: p.id, property_id: Spree::Property.find_by(name: 'Brand')).value %>" data-type="brand" disabled="true" type="text" value="<%= Spree::ProductProperty.find_by(product_id: p.id, property_id: Spree::Property.find_by(name: 'Brand')).nil? ? "" : Spree::ProductProperty.find_by(product_id: p.id, property_id: Spree::Property.find_by(name: 'Brand')).value %>"></li>
+          <li>Fabric: <input class="vendor_product_details" data-prev="<%= Spree::ProductProperty.find_by(product_id: p.id, property_id: Spree::Property.find_by(name: 'Fabric')).nil? ? "" : Spree::ProductProperty.find_by(product_id: p.id, property_id: Spree::Property.find_by(name: 'Fabric')).value %>" data-type="fabric" disabled="true" type="text" value="<%= Spree::ProductProperty.find_by(product_id: p.id, property_id: Spree::Property.find_by(name: 'Fabric')).nil? ? "" : Spree::ProductProperty.find_by(product_id: p.id, property_id: Spree::Property.find_by(name: 'Fabric')).value  %>"></li>
+          <li>Sizes: <input class="vendor_product_details" data-prev="<%= Spree::ProductProperty.find_by(product_id: p.id, property_id: Spree::Property.find_by(name: 'Sizes')).nil? ? "" : Spree::ProductProperty.find_by(product_id: p.id, property_id: Spree::Property.find_by(name: 'Sizes')).value %>" data-type="sizes" disabled="true" type="text" value="<%= Spree::ProductProperty.find_by(product_id: p.id, property_id: Spree::Property.find_by(name: 'Sizes')).nil? ? "" : Spree::ProductProperty.find_by(product_id: p.id, property_id: Spree::Property.find_by(name: 'Sizes')).value %>"></li>
+        </ul>
+      </div>
+      <div class="row_description_section">
+        <h4>Description:</h4>
+        <textarea disabled="true" data-prev="<%= p.description %>" data-type="description" class="vendor_product_details"><%= p.description %></textarea>
+      </div>
+    </li>
+  <% end %>
+</ul>
+<script>
+  vendor_product_pagination()
+</script>

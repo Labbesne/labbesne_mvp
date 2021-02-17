@@ -3,7 +3,6 @@ class Info < ApplicationRecord
   validates :name, presence: true, length: { minimum: 3, maximum: 30 }
   validates :dob, presence: true
   validates :phone, presence: true, length: {is: 8}, numericality: { only_integer: true }
-  validate :dob_ten
   validates :gender, presence: :true, inclusion: { in: %w(Male Female),
     message: "%{value} is not a valid gender" }
 

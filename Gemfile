@@ -3,7 +3,7 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 ruby '2.6.6'
 
-# Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
+# Latest Stable Rails
 gem 'rails'
 # Use postgresql as the database for Active Record
 gem 'pg', '>= 0.18', '< 2.0'
@@ -33,14 +33,22 @@ gem 'bootsnap', '>= 1.4.2', require: false
 gem 'autoprefixer-rails'
 gem 'font-awesome-sass'
 gem 'simple_form'
+
+# Pagination
 gem 'kaminari'
-# Solidus
+
+# Solidus shop api
 gem 'solidus'
+
 # Upload images to Cloudinary
 gem 'paperclip-cloudinary'
+
+# Monitoring
 gem 'appsignal'
 
-gem "skylight"
+# Barcode  Generator
+gem 'barby'
+gem 'chunky_png'
 group :development, :test do
   gem 'pry-byebug'
   gem 'pry-rails'
@@ -70,5 +78,6 @@ end
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 # gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
+gem 'solidus_reports', github: 'solidusio-contrib/solidus_reports'
 gem 'solidus_auth_devise', git: 'https://github.com/Shalashtein/solidus_auth_devise.git'
 gem 'solidus_paypal_commerce_platform'

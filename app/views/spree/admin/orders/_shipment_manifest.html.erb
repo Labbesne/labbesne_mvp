@@ -1,9 +1,8 @@
 <% shipment_manifest.each do |item| %>
   <tr class="stock-item"
       data-item-quantity="<%= item.quantity %>"
-      data-variant-id="<%= item.variant.id %>" style="<%= Track.find_by(spree_line_item_id: item.line_item.id).vendor_sent ? "background-color: rgba(50,250,50,0.4)" : ""%>">
+      data-variant-id="<%= item.variant.id %>">
     <td>
-    <button class=" btn btn-success admin_mark_shipped" data-i="<%= item.line_item.id %>" style="border: none; background: transparent; display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 10px auto;"><i class="fa fa-check-circle" style="width: 100%; height: 100%; font-size: 2.5rem; color: rgba(50,250,50,1);"></i></button></td>
     </td>
     <td class="item-image align-center">
       <%= render 'spree/admin/shared/image',

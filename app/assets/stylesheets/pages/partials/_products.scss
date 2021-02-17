@@ -13,7 +13,8 @@ body::-webkit-scrollbar-thumb {
   display: flex;
   overflow: hidden;
   align-items: stretch;
-  background: $royal;
+background: rgb(102,51,144);
+background: linear-gradient(197deg, rgba(102,51,144,1) 0%, rgba(77,34,218,1) 52%, rgba(22,118,200,1) 100%);
   position: relative;
 }
 
@@ -21,11 +22,13 @@ body::-webkit-scrollbar-thumb {
   position: absolute;
   top: 0;
   left: -30%;
+  top: 20px;
   width:30%;
-  height: 100%;
-  background: change-color($royal, $alpha: 0.9, $lightness: 70 );
+  height: 95%;
+  background: change-color($royal, $alpha: 0.3, $lightness: 85 );
   transition-duration: 0.5s;
   z-index: 90000;
+  backdrop-filter: blur(3px);
   &-header{
     height:25%;
     width: 100%;
@@ -33,7 +36,9 @@ body::-webkit-scrollbar-thumb {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    color: #212529a3;
+    color: white;
+    -webkit-text-stroke-width: 1px;
+    -webkit-text-stroke-color: rgba(0,0,0,0.3);
   }
   &-body{
     height:50%;
@@ -42,15 +47,22 @@ body::-webkit-scrollbar-thumb {
     color: rgba(10,10,10,0.8);
     overflow-x: hidden;
     overflow-y: auto;
+    color: white;
+    -webkit-text-stroke-width: 1px;
+    -webkit-text-stroke-color: rgba(0,0,0,0.1);
   }
   &-footer{
     height:25%;
     width: 100%;
     padding: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
     button{
-      width: 100%;
-      background-color: blue;
+      background-color: rgba(50,50,250,0.9);
       color: white;
+      border: 1.5px solid white;
+      border-radius: 5px;
       .fa-shopping-cart{
         margin-right: 5px;
       }
@@ -74,7 +86,7 @@ body::-webkit-scrollbar-thumb {
   }
 }
 .sidebar-active{
-  left: 0;
+  left: 10px;
 }
 .toggler-active{
   display: none !important;
@@ -96,7 +108,6 @@ body::-webkit-scrollbar-thumb {
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  padding-top: 20px;
   position: relative;
 }
 .product-filters{
@@ -104,7 +115,6 @@ body::-webkit-scrollbar-thumb {
   color: white;
   top: 60px;
   left: 20px;
-  z-index: 9999;
 }
 .dynamic-deck{
   height: 100%;
@@ -122,17 +132,18 @@ body::-webkit-scrollbar-thumb {
     list-style-type: none;
   .swipe-card-base{
     padding: 5px;
-    background-image: none;
-    background: rgb(230,230,230);
-    background: linear-gradient(135deg, rgba(230,230,230,0.85) 0%, rgba(180,200,201,0.896796218487395) 100%);
+    background: rgba(230,230,230,0.3);
+    backdrop-filter: blur(5px);
+    background: linear-gradient(135deg, rgba(250,250,250,0.4) 0%, rgba(250,250,250,0.1) 100%);
     display: flex;
     flex-direction: column;
     justify-content: center;
-    border-radius: 8px;
+    border-radius: 5px;
     height: 100%;
     width: 100%;
-    border: 1px solid rgba(10,10,10,0.5);
+    border: 2px solid rgba(200,200,200,0.5);
     transition: all 0.5s ease;
+    z-index: 69;
   }
   img {
     width: 100%;
@@ -170,7 +181,7 @@ body::-webkit-scrollbar-thumb {
   left:0;
   width: 100%;
   height: 100%;
-  background-color: rgba(80,80,80,0.8);
+  background: none;
   border-radius: 8px;
 }
 .swipe-card-like, .swipe-card-dislike{
@@ -347,5 +358,5 @@ body::-webkit-scrollbar-thumb {
   opacity: 1;
 }
 .saved_product{
-   border: 3px solid $gold
+   //border: 1px solid $gold;
 }

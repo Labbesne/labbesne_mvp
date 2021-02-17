@@ -78,6 +78,15 @@ class TracksController < ApplicationController
     end
   end
 
+  def delivered
+    @track.delivereds = true
+    if @track.save
+      redirect_to '/vendor/orders', notice: 'Order marked as recieved'
+    else
+      redirect_to '/vendor/orders', notice: "Error: #{@track.error}"
+    end
+  end
+
   # DELETE /tracks/1
   # DELETE /tracks/1.json
   def destroy

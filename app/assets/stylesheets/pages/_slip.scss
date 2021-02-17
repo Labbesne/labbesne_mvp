@@ -1,0 +1,54 @@
+#slip_container{
+  height: 100%;
+  width: 100%;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid black;
+  .slip_header{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    .slip_order_code{
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 60%;
+      .slip_order_barcode{
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        .slip_order_code_number{
+          width: 100%;
+        }
+      }
+    }
+    .slip_header_extras{
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      img{
+        height: 100%;
+        width: 100%;
+        object-fit: contain;
+      }
+    }
+  }
+  .slip_from_to{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    .slip_from{
+      width: 50%;
+    }
+    .slip_to{
+      width: 50%;
+    }
+  }
+  .slip_items{
+    width: 100%;
+    border: 1px solid black;
+  }
+}

@@ -1,6 +1,8 @@
 class PagesController < ApplicationController
-  layout 'application', only: "store"
-  layout 'landing', only: 'landing'
+  class << self
+   include Rails.application.routes.url_helpers
+  end
+  layout :resolve_layout
   before_action :signinRouter, except: [:landing, :guestSwiped]
   before_action :setCart, except: [:landing, :guestSwiped]
   before_action :setProducts, only: [:store, :deck, :landing]
@@ -115,6 +117,10 @@ class PagesController < ApplicationController
     end
   end
 
+  def vendor_update_image
+    Spree::Product.find(params[:p]).images.first.destroy
+  end
+
   def updateAddress
     current_spree_user.ship_address.address1 = params[:geo]
     current_spree_user.ship_address.address2 = params[:address2]
@@ -127,7 +133,6 @@ class PagesController < ApplicationController
     @order.next if @order.state == 'cart'
     @order.next if @order.state == 'address'
     @order.next if @order.state == 'delivery'
-    makePaymentCOD
     @order.next if @order.state == 'payment'
   end
 
@@ -135,7 +140,6 @@ class PagesController < ApplicationController
     @order.next if @order.state == 'cart'
     @order.next if @order.state == 'address'
     @order.next if @order.state == 'delivery'
-    makePaymentCOD
     @order.next if @order.state == 'payment'
   end
 
@@ -156,10 +160,7 @@ class PagesController < ApplicationController
   end
 
   def finalize
-    @order.line_items.each do |item|
-      t = Track.new(spree_line_item_id: item.id, vendor_recieved: false, vendor_sent: false, recieved: false, quantity: item.quantity, spree_user_id: Spree::Product.find(Spree::Variant.find(item.variant_id).product_id).spree_user_id)
-      t.save!
-    end
+    @shipments = @order.shipments
     makePaymentCOD
     @order.complete
   end
@@ -216,27 +217,147 @@ class PagesController < ApplicationController
   # Vendor Dashboard #############################################################
 
   def vendor
-    @products = @products || Spree::Product.where(spree_user_id: current_spree_user)
-    # TODO change the id to current_spree_user
-    @tracks = @tracks ||Track.where(spree_user_id: 2, vendor_sent: false).group_by {|t| t.spree_order_id}
+    @shipments = Spree::Shipment.where(stock_location_id: current_spree_user.stock_locations.first.id, state: "pending").joins(:order).where(spree_orders: {state: 'complete'}).order(created_at: :asc)
+  end
+
+  def vendor_orders
+    @shipments = Spree::Shipment.where(stock_location_id: current_spree_user.stock_locations.first.id, state: "pending").joins(:order).where(spree_orders: {state: 'complete'}).order(created_at: :asc)
+    render partial: 'pages/partials/vendor/orders'
   end
 
   def vendor_order_ready
-    order = Spree::Order.find(params[:o])
-    order.line_items.where(spree_user_id: current_spree_user.id).each do |li|
-      track = Track.find_by(spree_line_item_id: li.id)
-      track.vendor_recieved = true
-      track.save
-      puts track.inspect
-    end
+    s = Spree::Shipment.find(params[:s])
+    s.order.vendor_state = true
+    s.save!
+    s.update_state if Spree::Shipment.find(params[:s]).state == 'pending'
   end
 
-  def vendor_order_picked
-    li = Spree::LineItem.find(params[:i])
-    track = Track.find_by(spree_line_item_id: li.id)
-    track.vendor_sent = true
-    track.save
+  def slip
+    @shipment = Spree::Shipment.find(params[:s])
+    @order = @shipment.order
+    @customer = Spree::User.find(@order.user_id)
+    @ship_barcode = Barby::Code128B.new(@shipment.number).to_png(height: 100)
+    @order_barcode = Barby::Code128A.new(@order.number).to_image(height: 60)
+    @vendor = Spree::User.find(@shipment.stock_location.spree_user_id)
   end
+
+ def vendor_info
+  if current_spree_user.profile.nil?
+    p = Profile.new(spree_user_id: current_spree_user.id)
+    p.save!
+  end
+  @info = current_spree_user.profile.info.nil? ? Info.new : current_spree_user.profile.info
+  render partial: 'pages/partials/vendor/info'
+ end
+
+ def vendor_products
+  @image = Spree::Image.new
+  @products = Spree::Product.where(spree_user_id: current_spree_user).order(created_at: :desc).page(params[:page]).per(5)
+  @p = Spree::Product.new
+  render partial: 'pages/partials/vendor/products'
+ end
+
+ def vendor_search
+  if params[:sku] == ''
+    @products = Spree::Product.where(spree_user_id: current_spree_user).page(params[:page]).per(5)
+  else
+    @products = Spree::Product.where(spree_user_id: current_spree_user, vendorSKU: params[:sku]).page(params[:page]).per(5)
+  end
+  render partial: 'pages/partials/vendor/products_list'
+ end
+
+ def edit_product
+  product = Spree::Product.find(params[:p])
+  case params[:type]
+  when 'name'
+    product.name = params[:val]
+    product.save!
+  when 'vendorSKU'
+    product.vendorSKU = params[:val]
+    product.save!
+  when 'price'
+    #price = product.prices.where(country_iso: "LB") || Spree::Price.create(variant_id: Spree::Variant.find_by(product_id: product.id, amount: params[:value],currency: "LBP", country_code: "LB"))
+    #price.amount = params[:value]
+    #price.save!
+  when 'gender'
+    product.gender = params[:val]
+    product.save!
+  when 'brand'
+    pp = Spree::ProductProperty.find_or_create_by(product_id: product.id, property_id: Spree::Property.find_by(name: 'Brand').id)
+    pp.value = params[:val]
+    pp.save!
+  when 'fabric'
+    pp = Spree::ProductProperty.find_or_create_by(product_id: product.id, property_id: Spree::Property.find_by(name: 'Fabric').id)
+    pp.value = params[:val]
+    pp.save!
+  when 'sizes'
+    pp = Spree::ProductProperty.find_or_create_by(product_id: product.id, property_id: Spree::Property.find_by(name: 'Sizes').id)
+    pp.value = params[:val]
+    pp.save!
+  when 'description'
+    product.description = params[:val]
+    product.save!
+  when 'stock'
+    stock = product.stock_items.find_by(stock_location_id: current_spree_user.stock_locations.first.id)
+    stock.adjust_count_on_hand(params[:val].to_i)
+    stock.save!
+    product.save!
+  end
+ end
+
+ def create_product
+  render partial: 'pages/partials/vendor/new_product'
+ end
+
+ def vendor_new_product
+  name = params[:name]
+  vendorSKU = params[:vendorSKU]
+  price = params[:price]
+  gender = params[:gender]
+  product = Spree::Product.new
+  brand = params[:brand]
+  fabric = params[:fabric]
+  sizes = params[:sizes]
+  product.name = name
+  product.vendorSKU = vendorSKU
+  product.gender = gender
+  product.price = price
+  product.shipping_category = Spree::ShippingCategory.find_by(name: "Default")
+  product.tax_category = Spree::TaxCategory.find_by(name: "Default")
+  product.spree_user_id = current_spree_user.id
+  product.save!
+  pp = Spree::ProductProperty.find_or_create_by(product_id: product.id, property_id: Spree::Property.find_by(name: 'Brand').id)
+  pp.value = brand
+  pp.save!
+  pp = Spree::ProductProperty.find_or_create_by(product_id: product.id, property_id: Spree::Property.find_by(name: 'Fabric').id)
+  pp.value = fabric
+  pp.save!
+  pp = Spree::ProductProperty.find_or_create_by(product_id: product.id, property_id: Spree::Property.find_by(name: 'Sizes').id)
+  pp.value = sizes
+  pp.save!
+  respond_to do |format|
+    format.json { render json: {"vid" => product.variants_including_master.first.id, "id" => product.id}, status: 200}
+  end
+ end
+
+ def vendor_analytics
+  render partial: 'pages/partials/vendor/analytics'
+ end
+
+ def vendor_info_change
+  @location = Spree::StockLocation.find_by(spree_user_id: current_spree_user.id)
+  case params[:input]
+  when "name"
+    @location.admin_name = params[:value]
+    @location.save!
+  when "phone"
+    @location.phone = params[:value]
+    @location.save!
+  when "address"
+    @location.address1 = params[:value]
+    @location.save!
+  end
+ end
 
   # End of vendor dashboard #############################################################
   #
@@ -316,11 +437,27 @@ class PagesController < ApplicationController
   end
 
   def makePaymentCOD
-    payment = Spree::Payment.new
-    payment.payment_method_id = Spree::PaymentMethod.where(name: 'Cash on Delivery').first.id
-    payment.order_id = @order.id
-    payment.amount = @order.total
-    payment.save!
+    @shipments.each do |s|
+      payment = Spree::Payment.new
+      payment.payment_method_id = Spree::PaymentMethod.where(name: 'Cash on Delivery').first.id
+      payment.order_id = @order.id
+      payment.amount = s.total_with_items
+      payment.save!
+    end
     @order.save
   end
+
+   def resolve_layout
+    case action_name
+    when "store"
+      "application"
+    when "landing"
+      "landing"
+    when "slip"
+      "slip"
+    else
+      "application"
+    end
+  end
+
 end
